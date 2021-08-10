@@ -5,10 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:location/location.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'entries.dart';
 
 
 class NewPost extends StatefulWidget {
@@ -60,42 +57,51 @@ class _NewPostState extends State<NewPost> {
                   Container(
                     height: 270,
                     width: MediaQuery.of(context).size.width,
-                    child: Image.network('${url}')
-                  ),
-                  Form(
-                    key: formKey,
-                    child: Container(
-                      height: 200,
-                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: TextFormField(
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        initialValue: 'Number of Wasted Items',
-                        keyboardType: TextInputType.numberWithOptions(decimal: false),
-                        style: TextStyle(fontSize: 25),
-                        textAlign: TextAlign.center,
-                        validator: (value) {
-                          final intValue = num.tryParse(value as String);
-                          if (intValue == null){
-                            return 'Please enter amount';
-                          } else {
-                            return null;
-                          }
-                        },
-                        onSaved: (value) {amount = value;}
-                      )
+                    child: Semantics(
+                      label: 'Picture of the wasted food.',
+                      child: Image.network('${url}')
                     )
                   ),
+                  Semantics(
+                    label: 'Number of wasted food items.',
+                    child: Form(
+                      key: formKey,
+                      child: Container(
+                        height: 200,
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        child: TextFormField(
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          initialValue: 'Number of Wasted Items',
+                          keyboardType: TextInputType.numberWithOptions(decimal: false),
+                          style: TextStyle(fontSize: 25),
+                          textAlign: TextAlign.center,
+                          validator: (value) {
+                            final intValue = num.tryParse(value as String);
+                            if (intValue == null){
+                              return 'Please enter amount';
+                            } else {
+                              return null;
+                            }
+                          },
+                          onSaved: (value) {amount = value;}
+                        )
+                      )
+                    ),
+                  )
                 ]
               ),
               SizedBox(),
-              GestureDetector(
-                onTap: uploadData,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  color: Colors.blue,
-                  child: Icon(Icons.cloud_upload, size: 65)
+              Semantics(
+                label: 'Upload the food waste data.',
+                child: GestureDetector(
+                  onTap: uploadData,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    color: Colors.blue,
+                    child: Icon(Icons.cloud_upload, size: 65)
+                  )
                 )
               )
             ]

@@ -1,9 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:wasteagram/models/screen_waste_post.dart';
 import 'package:wasteagram/screens/details.dart';
 import 'package:wasteagram/screens/new_post.dart';
@@ -60,13 +57,17 @@ class _EntriesState extends State<Entries> {
           }
         }
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => NewPost())
-          );
-        },
+      floatingActionButton: Semantics(
+        label: 'Select picture for the new post.',
+        child: FloatingActionButton(
+          child: Icon(Icons.camera_alt),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => NewPost()
+              )
+            );  
+          },
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

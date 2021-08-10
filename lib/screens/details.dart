@@ -32,9 +32,12 @@ class _DetailsState extends State<Details> {
               margin: EdgeInsets.fromLTRB(0, 20, 0, 60),
               child: Text('${widget.post.date}', style: TextStyle(fontSize: 30)),
             ),
-            Container(
-              height: 300,
-              child: Image.network('${widget.post.imageURL}')
+            Semantics(
+              label: 'Picture of the wasted food.',
+              child: Container(
+                height: 300,
+                child: Image.network('${widget.post.imageURL}')
+              )
             ),
             Container(
               margin: EdgeInsets.fromLTRB(0, 50, 0, 50),
