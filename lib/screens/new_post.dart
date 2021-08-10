@@ -1,17 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:location/location.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'entries.dart';
 
 
 class NewPost extends StatefulWidget {
-
-  String imageURL;
-
-  NewPost({required this.imageURL});
 
   @override
   _NewPostState createState() => _NewPostState();
@@ -20,70 +20,89 @@ class NewPost extends StatefulWidget {
 
 class _NewPostState extends State<NewPost> {
 
+  File? image;
+  final picker = ImagePicker();
   final formKey = GlobalKey<FormState>();
   var amount;
+  String? url;
+
+  @override
+  void initState() {
+    super.initState();
+    getImage();
+  }
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('New Post'),
-        centerTitle: true
-      ),
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Container(
-                  height: 270,
-                  width: MediaQuery.of(context).size.width,
-                  child: Image.network(widget.imageURL)
-                ),
-                Form(
-                  key: formKey,
-                  child: Container(
-                    height: 200,
-                    margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: TextFormField(
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      initialValue: 'Number of Wasted Items',
-                      keyboardType: TextInputType.numberWithOptions(decimal: false),
-                      style: TextStyle(fontSize: 25),
-                      textAlign: TextAlign.center,
-                      validator: (value) {
-                        final intValue = num.tryParse(value as String);
-                        if (intValue == null){
-                          return 'Please enter amount';
-                        } else {
-                          return null;
-                        }
-                      },
-                      onSaved: (value) {amount = value;}
+    if (url == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('New Post'),
+          centerTitle: true,
+        ),
+        body: Center(child: CircularProgressIndicator())
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('New Post'),
+          centerTitle: true
+        ),
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Container(
+                    height: 270,
+                    width: MediaQuery.of(context).size.width,
+                    child: Image.network('${url}')
+                  ),
+                  Form(
+                    key: formKey,
+                    child: Container(
+                      height: 200,
+                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      child: TextFormField(
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        initialValue: 'Number of Wasted Items',
+                        keyboardType: TextInputType.numberWithOptions(decimal: false),
+                        style: TextStyle(fontSize: 25),
+                        textAlign: TextAlign.center,
+                        validator: (value) {
+                          final intValue = num.tryParse(value as String);
+                          if (intValue == null){
+                            return 'Please enter amount';
+                          } else {
+                            return null;
+                          }
+                        },
+                        onSaved: (value) {amount = value;}
+                      )
                     )
-                  )
-                ),
-              ]
-            ),
-            SizedBox(),
-            GestureDetector(
-              onTap: uploadData,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.1,
-                color: Colors.blue,
-                child: Icon(Icons.cloud_upload, size: 65)
+                  ),
+                ]
+              ),
+              SizedBox(),
+              GestureDetector(
+                onTap: uploadData,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  color: Colors.blue,
+                  child: Icon(Icons.cloud_upload, size: 65)
+                )
               )
-            )
-          ]
+            ]
+          )
         )
-      )
-    );
+      );
+    }
   }
 
   void uploadData() async {
@@ -98,7 +117,7 @@ class _NewPostState extends State<NewPost> {
       FirebaseFirestore.instance
         .collection('posts')
         .add({'date': DateFormat.yMMMMd('en_US').format(DateTime.now()).toString(), 
-              'imageURL': widget.imageURL, 
+              'imageURL': url, 
               'quantity': amount,
               'latitude': '${locationData.latitude}',
               'longitude': '${locationData.longitude}',
@@ -138,4 +157,18 @@ class _NewPostState extends State<NewPost> {
     locationData = await locationService.getLocation();
     return locationData;
   }
+
+  Future getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    image = File(pickedFile!.path);
+
+    var fileName = DateTime.now().toString() + '.jpg';
+    Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
+    UploadTask uploadTask = storageReference.putFile(image!);
+    await uploadTask;
+    url = await storageReference.getDownloadURL();
+    setState(() {});
+  }
+
+
 }

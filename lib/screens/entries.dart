@@ -16,8 +16,6 @@ class Entries extends StatefulWidget {
 
 class _EntriesState extends State<Entries> {
 
-  File? image;
-  final picker = ImagePicker();
   ScreenWastePost? screenWastePost;
 
   @override
@@ -64,30 +62,13 @@ class _EntriesState extends State<Entries> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
-        onPressed: createNewPost,
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => NewPost())
+          );
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
-  void createNewPost() async {
-    final url = await getImage();
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => NewPost(imageURL: url))
-    );
-  }
-
-  Future getImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    image = File(pickedFile!.path);
-
-    var fileName = DateTime.now().toString() + '.jpg';
-    Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-    UploadTask uploadTask = storageReference.putFile(image!);
-    await uploadTask;
-    final url = await storageReference.getDownloadURL();
-    return url;
-  }
-
-
 }
