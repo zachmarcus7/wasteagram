@@ -29,7 +29,10 @@ class _EntriesState extends State<Entries> {
       ),
       body: StreamBuilder(
         stream:
-          FirebaseFirestore.instance.collection('posts').snapshots(),
+          FirebaseFirestore.instance
+            .collection('posts')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
         builder:
           (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData &&
