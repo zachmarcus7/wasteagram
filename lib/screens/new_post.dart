@@ -101,7 +101,8 @@ class _NewPostState extends State<NewPost> {
               'imageURL': widget.imageURL, 
               'quantity': amount,
               'latitude': '${locationData.latitude}',
-              'longitude': '${locationData.longitude}'
+              'longitude': '${locationData.longitude}',
+              'timestamp': DateTime.now().millisecondsSinceEpoch
             });
       Navigator.of(context).pop();
     }
