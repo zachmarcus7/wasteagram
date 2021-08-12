@@ -19,8 +19,24 @@ class _EntriesState extends State<Entries> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wastegram'),
-        centerTitle: true
+        centerTitle: true,
+        title: StreamBuilder(
+          stream:
+            FirebaseFirestore.instance
+              .collection('total_posts')
+              .snapshots(),
+          builder:
+            (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData &&
+                  snapshot.data!.docs != null &&
+                  snapshot.data!.docs.length > 0) {
+                    int totalQuantity = snapshot.data!.docs[0]['total_quantity'];
+                    return Text('Wasteagram - ${totalQuantity}');
+                  } else {
+                    return Text('Wasteagram - 0');
+                  }
+            }
+        ),
       ),
       body: StreamBuilder(
         stream:
@@ -72,4 +88,5 @@ class _EntriesState extends State<Entries> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+
 }

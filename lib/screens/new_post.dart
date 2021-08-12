@@ -1,3 +1,4 @@
+  
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -129,6 +130,31 @@ class _NewPostState extends State<NewPost> {
               'longitude': '${locationData.longitude}',
               'timestamp': DateTime.now().millisecondsSinceEpoch
             });
+      
+      // get the original quantity sum
+      dynamic totalQuantity = 0;
+      await FirebaseFirestore.instance
+        .collection('total_posts')
+        .doc('OZU7KnZ5GaamaUiT29zW')
+        .get()
+        .then((DocumentSnapshot snapshot) {
+          if (snapshot.exists) {
+            try {
+                totalQuantity = snapshot.get(FieldPath(['total_quantity']));
+            } on StateError catch(e) {
+              print('Field doesn\'t exist.');
+            }
+          }
+        });
+
+        // update the quantity sum
+        totalQuantity = totalQuantity + int.tryParse(amount);
+        FirebaseFirestore.instance.collection('total_posts')
+          .doc('OZU7KnZ5GaamaUiT29zW')
+          .update({'total_quantity': totalQuantity})
+          .then((value) => print('Updated quantity'))
+          .catchError((error) => print('Failed to update quantity: $error'));
+
       Navigator.of(context).pop();
     }
   }

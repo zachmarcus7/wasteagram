@@ -14,4 +14,6 @@ class ScreenWastePost {
     this.longitude = post['longitude'];
   }
 
+  int get getQuantity => quantity as int;
+
 }
