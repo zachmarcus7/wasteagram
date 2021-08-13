@@ -5,6 +5,12 @@ class ScreenWastePost {
   var quantity;
   var latitude;
   var longitude;
+
+  ScreenWastePost({this.date,
+                   this.imageURL,
+                   this.quantity,
+                   this.latitude,
+                   this.longitude});
   
   ScreenWastePost.fromSnapshot(var post) {
     this.date = post['date'];

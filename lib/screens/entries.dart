@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wasteagram/models/screen_waste_post.dart';
@@ -62,9 +61,13 @@ class _EntriesState extends State<Entries> {
                         ))
                       );
                     },
-                    child: ListTile(
-                      title: Text(post['date']),
-                      trailing: Text(post['quantity'])
+                    child: Semantics(
+                      container: true,
+                      onTapHint: 'Leads to details page.',
+                      child: ListTile(
+                        title: Text(post['date']),
+                        trailing: Text(post['quantity'])
+                      )
                     ),
                   );
                 });
@@ -74,6 +77,8 @@ class _EntriesState extends State<Entries> {
         }
       ),
       floatingActionButton: Semantics(
+        container: true,
+        button: true,
         label: 'Select picture for the new post.',
         child: FloatingActionButton(
           child: Icon(Icons.camera_alt),

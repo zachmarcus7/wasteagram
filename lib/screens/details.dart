@@ -33,6 +33,8 @@ class _DetailsState extends State<Details> {
               child: Text('${widget.post.date}', style: TextStyle(fontSize: 30)),
             ),
             Semantics(
+              container: true,
+              image: true,
               label: 'Picture of the wasted food.',
               child: Container(
                 height: 300,

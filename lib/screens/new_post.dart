@@ -59,11 +59,15 @@ class _NewPostState extends State<NewPost> {
                     height: 270,
                     width: MediaQuery.of(context).size.width,
                     child: Semantics(
+                      image: true,
+                      container: true,
                       label: 'Picture of the wasted food.',
                       child: Image.network('${url}')
                     )
                   ),
                   Semantics(
+                    container: true,
+                    textField: true,
                     label: 'Number of wasted food items.',
                     child: Form(
                       key: formKey,
@@ -94,6 +98,8 @@ class _NewPostState extends State<NewPost> {
               ),
               SizedBox(),
               Semantics(
+                container: true,
+                button: true,
                 label: 'Upload the food waste data.',
                 child: GestureDetector(
                   onTap: uploadData,
